@@ -17,7 +17,7 @@ type Block struct {
 }
 
 //	创建新 区块
-func NewBlock( height int64, PrevBlockHash []byte,data string) *Block  {
+func NewBlock( height int64, PrevBlockHash []byte,data string) *Block {
   	block := &Block{height, PrevBlockHash, []byte(data),time.Now().Unix(), nil}
   	block.SetHash()
 	return  block

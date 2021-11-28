@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"new_block/block"
+	block2 "new_block/block"
 )
 
 func main()  {
 
-	blockchain := block.CreateBlockchainGenesisBlock()
+	blockchain := block2.CreateBlockchainGenesisBlock()
 	blockchain.AddBlockToBlockchain(
 		int64(len(blockchain.Blocks) + 1),
 		blockchain.Blocks[len(blockchain.Blocks) - 1].Hash,
