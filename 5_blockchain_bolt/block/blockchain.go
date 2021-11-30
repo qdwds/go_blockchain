@@ -1,11 +1,8 @@
 package block
 
 import (
-	"fmt"
 	"github.com/boltdb/bolt"
 	"log"
-	"math/big"
-	"time"
 )
 
 //	数据库名字
@@ -13,12 +10,13 @@ const dbName = "blockchaom.db"
 //	数据库 表名
 const blockTableName = "blocks"
 
-
 //	区块链结构体
 type Blockchain struct {
 	Tip []byte 	//	最新区块的hash值
 	DB *bolt.DB	//
 }
+
+
 //	创建带有传世区块的区块链
 func CreateBlockchainGenesisBlock(data string) *Blockchain {
 	db,err := bolt.Open(dbName,0600,nil)
@@ -64,6 +62,8 @@ func CreateBlockchainGenesisBlock(data string) *Blockchain {
 	return &Blockchain{blckHash,db}
 }
 
+
+
 //	添加区块到区块链中
 func (blc *Blockchain) AddBlockToBlockchain( data string)  {
 
@@ -102,38 +102,38 @@ func (blc *Blockchain) AddBlockToBlockchain( data string)  {
 }
 
 //	遍历 循环 获取所有区块信息
-func (blc *Blockchain)Printchain()  {
-	var block *Block
-	var currentHash []byte = blc.Tip
-	for {
-		err := blc.DB.View(func(tx *bolt.Tx) error {
-			b := tx.Bucket([]byte(blockTableName))
-			if b != nil {
-				//	获取当前区块的字节数组
-				blockBytes := b.Get([]byte(currentHash))
-				//	反序列化
-				block = DeserializeBlick(blockBytes)
-				fmt.Printf("Height: %d\n",block.Height)
-				fmt.Printf("PrevBlockHash: %x\n",block.PrevBlockHash)
-				fmt.Printf("Data: %s\n",block.Data)
-				fmt.Printf("Timestamp: %s\n",time.Unix(block.Timestamp,0).Format("2006-01-02 15:04:05"))
-				fmt.Printf("Hash: %x\n",block.Hash)
-				fmt.Printf("Nonce: %d\n",block.Nonce)
-				fmt.Println("--------------------------------------------------------------")
-			}
-
-			return nil
-		})
-		if err != nil{
-			log.Panic(err)
-		}
-
-		var hashInt big.Int
-		hashInt.SetBytes(block.PrevBlockHash)
-		if big.NewInt(0).Cmp(&hashInt) == 0{
-			break
-		}
-		currentHash = block.PrevBlockHash
-		currentHash = block.PrevBlockHash
-	}
-}
+//func (blc *Blockchain)Printchain()  {
+//	var block *Block
+//	var currentHash []byte = blc.Tip
+//	for {
+//		err := blc.DB.View(func(tx *bolt.Tx) error {
+//			b := tx.Bucket([]byte(blockTableName))
+//			if b != nil {
+//				//	获取当前区块的字节数组
+//				blockBytes := b.Get([]byte(currentHash))
+//				//	反序列化
+//				block = DeserializeBlick(blockBytes)
+//				fmt.Printf("Height: %d\n",block.Height)
+//				fmt.Printf("PrevBlockHash: %x\n",block.PrevBlockHash)
+//				fmt.Printf("Data: %s\n",block.Data)
+//				fmt.Printf("Timestamp: %s\n",time.Unix(block.Timestamp,0).Format("2006-01-02 15:04:05"))
+//				fmt.Printf("Hash: %x\n",block.Hash)
+//				fmt.Printf("Nonce: %d\n",block.Nonce)
+//				fmt.Println("--------------------------------------------------------------")
+//			}
+//
+//			return nil
+//		})
+//		if err != nil{
+//			log.Panic(err)
+//		}
+//
+//		var hashInt big.Int
+//		hashInt.SetBytes(block.PrevBlockHash)
+//		if big.NewInt(0).Cmp(&hashInt) == 0{
+//			break
+//		}
+//		currentHash = block.PrevBlockHash
+//		currentHash = block.PrevBlockHash
+//	}
+//}
