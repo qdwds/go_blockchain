@@ -2,6 +2,7 @@ package block
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
 	"log"
@@ -12,19 +13,28 @@ import (
 type Block struct {
 	Height int64			//	区块高度
 	PrevBlockHash []byte	//	上一个区块的HASH
-	Data []byte				//	交易数据
+	//Data []byte				//	交易数据
+	Txs []*Transaction
 	Timestamp int64			//	时间戳
 	Hash []byte				//	当前HASH
 	Nonce int64				//	工作量证明
 }
 
-func (b *Block) HashTransactions()  {
-	return
+//	将Txs转换成字节数组[]type
+func (b *Block) HashTransactions() []byte {
+	var txHashes [][]byte
+	var txHash [32]byte
+
+	for _,tx := range b.Txs{
+		txHashes = append(txHashes, tx.TxHash)
+	}
+	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
+	return txHash[:]
 }
 
 //	创建新 区块
-func NewBlock( height int64, PrevBlockHash []byte,data string) *Block {
-  	block := &Block{height, PrevBlockHash, []byte(data),time.Now().Unix(), nil,0}
+func NewBlock( height int64, PrevBlockHash []byte,txs []*Transaction) *Block {
+  	block := &Block{height, PrevBlockHash, txs,time.Now().Unix(), nil,0}
 	//	调用工作量证明的方法 返回有效的Hash和Nonce
 	pow := NewProofOfWork(block)
 
@@ -39,9 +49,9 @@ func NewBlock( height int64, PrevBlockHash []byte,data string) *Block {
 
 
 //生成传世区块
-func CreateGenesisBlock(data string) *Block {
+func CreateGenesisBlock(txs []*Transaction) *Block {
 	//return NewBlock(1,[]byte{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},data)
-	return NewBlock(1,make([] byte,32,32),data)
+	return NewBlock(1,make([] byte,32,32),txs)
 }
 
 //	序列化 => 将区块序列化成字节数组

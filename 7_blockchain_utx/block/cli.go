@@ -23,14 +23,14 @@ func isValidArgs()  {
 	}
 }
 //	添加区块
-func (cli *Cli)addBlock(data string)  {
+func (cli *Cli)addBlock(txs []*Transaction)  {
 	if DBExists() == false{
 		fmt.Println("请先创建创世区块！")
 		os.Exit(1)
 	}
 	blockchain := BlockchainObject()
 	defer blockchain.DB.Close()
-	blockchain.AddBlockToBlockchain(data)
+	blockchain.AddBlockToBlockchain(txs)
 }
 //	输出
 func (cli *Cli) printChain() {
@@ -44,8 +44,8 @@ func (cli *Cli) printChain() {
 }
 
 //	创建创世区块
-func (cli *Cli) createGenesis(data string)  {
-	CreateBlockchainGenesisBlock(data)
+func (cli *Cli) createGenesis(txs []*Transaction)  {
+	CreateBlockchainGenesisBlock(txs)
 }
 func (cli *Cli) Run()  {
 	//	通过flag 来调用区块链；

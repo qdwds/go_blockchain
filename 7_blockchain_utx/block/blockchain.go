@@ -28,7 +28,7 @@ func DBExists() bool {
 }
 
 //	创建带有传世区块的区块链
-func CreateBlockchainGenesisBlock(data string) {
+func CreateBlockchainGenesisBlock(txs []*Transaction) {
 	//	判断数据库是否存在
 	if DBExists() {
 		fmt.Println("创世区块已经存在！")
@@ -51,7 +51,7 @@ func CreateBlockchainGenesisBlock(data string) {
 
 		//	创建创世区块
 		if b != nil {
-			gb := CreateGenesisBlock(data)
+			gb := CreateGenesisBlock(txs)
 			//	hash 作为key值
 			//	创世区块存储到表中
 			err := b.Put(gb.Hash, gb.Serialize())
@@ -77,7 +77,7 @@ func CreateBlockchainGenesisBlock(data string) {
 }
 
 //	添加区块到区块链中
-func (blc *Blockchain) AddBlockToBlockchain(data string) {
+func (blc *Blockchain) AddBlockToBlockchain(txs []*Transaction) {
 
 	////	往数区块链数组中添加新区块
 	//bc.Blocks = append(bc.Blocks, newBlock)
@@ -91,7 +91,7 @@ func (blc *Blockchain) AddBlockToBlockchain(data string) {
 			//	反序列化 获取最新区块数据
 			block := DeserializeBlick(blockBytes)
 			//	将区块序列化 =>  存储到数据库中
-			newBlock := NewBlock(block.Height+1, block.Hash, data)
+			newBlock := NewBlock(block.Height+1, block.Hash, txs)
 			err := b.Put(newBlock.Hash, newBlock.Serialize())
 			if err != nil {
 				log.Panic(err)
